@@ -1,31 +1,32 @@
-from nbformat import write
 import streamlit as st
 import pandas as pd
-import numpy as np
-import ydata_profiling
-from streamlit_ydata_profiling import st_profile_report
 from ydata_profiling import ProfileReport
 
+# Sidebar file uploader for both Excel and CSV
+uploaded_file = st.sidebar.file_uploader("Upload your input file", type=["xlsx", "csv"])
 
-st.title("Data Profiling App")
-st.subheader("This app will help you to do Data Exploration")
-
-st.sidebar.header('User Input Features')
-
-
-# Collects user input features into dataframe
-uploaded_file = st.sidebar.file_uploader("Upload your input Excel file", type="xlsx")
 if uploaded_file is not None:
     st.markdown('---')
-    input_df = pd.read_excel(uploaded_file, engine="openpyxl")
     
-    profile = ProfileReport(input_df, title="New Data for profiling")
+    # Determine the file type
+    file_extension = uploaded_file.name.split('.')[-1]
+    
+    # Load the file based on its extension
+    if file_extension == 'xlsx':
+        input_df = pd.read_excel(uploaded_file, engine="openpyxl")
+    elif file_extension == 'csv':
+        input_df = pd.read_csv(uploaded_file)
 
-    st.subheader("Detailed Report of the Data Used")
-
+    # Display the file content
     st.write(input_df)
-
-    st_profile_report(profile)    
     
+    # Generate and display the profile report
+    profile = ProfileReport(input_df, title="New Data for Profiling")
+    
+    st.subheader("Detailed Report of the Data Used")
+    
+    # Embed the profiling report as HTML in Streamlit
+    st.components.v1.html(profile.to_html(), height=1000, scrolling=True)
+
 else:
-    st.write("You did not upload the new file")
+    st.write("You did not upload a file.")
