@@ -1,5 +1,6 @@
 Streamlit
 ydata-profiling
 openpyxl
-nbformat
-streamlit_pandas_profiling
+setuptools
+
+
